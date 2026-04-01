@@ -108,15 +108,17 @@ textarea{resize:vertical;min-height:85px}
     <div class="aviso-titulo">Aviso importante sobre la validez del reporte</div>
     <p>El reporte generado es de carácter <strong>preliminar y referencial</strong>. Los resultados se obtienen exclusivamente a partir de análisis satelital y <strong>no tienen validez técnica</strong> sin la realización posterior de una visita de campo que permita verificar, calibrar y complementar los parámetros obtenidos. El período de análisis histórico será determinado por el profesional responsable.</p>
   </div>
-  <form id="form" onsubmit="enviar(event)">
+  <form id="form" action="https://formspree.io/f/mwvwqdor" method="POST">
+    <input type="hidden" name="_subject" value="Nueva solicitud de estudio — Servicios en Agromática">
+    <input type="hidden" name="_next" value="">
     <label>Nombre completo *</label>
-    <input type="text" id="nombre" placeholder="Su nombre completo" required>
+    <input type="text" name="nombre" placeholder="Su nombre completo" required>
     <label>Correo electrónico *</label>
-    <input type="email" id="correo" placeholder="correo@ejemplo.com" required>
+    <input type="email" name="email" placeholder="correo@ejemplo.com" required>
     <label>Teléfono / WhatsApp</label>
-    <input type="tel" id="tel" placeholder="+506 8xxx-xxxx">
+    <input type="tel" name="telefono" placeholder="+506 8xxx-xxxx">
     <label>Tipo de estudio *</label>
-    <select id="tipo" required>
+    <select name="tipo_estudio" required>
       <option value="">— Seleccione el tipo de análisis —</option>
       <option>Análisis NDVI / teledetección</option>
       <option>Estudio de uso del suelo</option>
@@ -124,11 +126,11 @@ textarea{resize:vertical;min-height:85px}
       <option>Combinado (varios análisis)</option>
     </select>
     <label>Nombre o descripción del predio *</label>
-    <input type="text" id="predio" placeholder="Ej: Finca Las Palmas, Pocosol, San Carlos" required>
+    <input type="text" name="predio" placeholder="Ej: Finca Las Palmas, Pocosol, San Carlos" required>
     <label>Área aproximada del terreno *</label>
     <div class="area-row">
-      <input type="number" id="area" placeholder="Ej: 14.5" min="0.1" step="0.1" required>
-      <select id="unidad">
+      <input type="number" name="area" placeholder="Ej: 14.5" min="0.1" step="0.1" required>
+      <select name="unidad_area">
         <option value="ha">Hectáreas</option>
         <option value="m2">m²</option>
         <option value="mz">Manzanas</option>
@@ -136,13 +138,12 @@ textarea{resize:vertical;min-height:85px}
     </div>
     <p class="field-hint">Si no conoce el área exacta, una estimación es suficiente.</p>
     <label>Coordenadas del centroide del terreno (opcional)</label>
-    <input type="text" id="coords" placeholder="Ej: 10.4234, -84.5612">
+    <input type="text" name="coordenadas" placeholder="Ej: 10.4234, -84.5612">
     <p class="field-hint">Latitud, longitud del punto central de su propiedad. Obténgalas desde Google Maps o su GPS.</p>
     <label>Detalles adicionales</label>
-    <textarea id="detalles" placeholder="Objetivo del estudio, uso previsto del reporte, requisitos especiales…"></textarea>
+    <textarea name="detalles" placeholder="Objetivo del estudio, uso previsto del reporte, requisitos especiales…"></textarea>
     <button type="submit" class="btn-submit">Enviar solicitud</button>
   </form>
-  <div class="success-msg" id="ok">&#10004; ¡Solicitud recibida! El Ing. Delgado Salas se pondrá en contacto en las próximas 24 horas hábiles.</div>
 </div>
 <div class="contact-bar">
   <strong style="color:#E6F1FB">Servicios en Agromática</strong>
@@ -152,7 +153,7 @@ textarea{resize:vertical;min-height:85px}
 </div>
 <div class="footer">
   Servicios en Agromática · Profesional responsable: Ing. Agr. Alfonso Delgado Salas, CIAGR No. 2677<br>
-  <a href="https://ServiciosAgromatica.github.io" style="color:#bbb">ServiciosAgromatica.github.io</a>
+  <a href="https://agromatica13-sketch.github.io/ServiciosAgromatica.github.io/" style="color:#bbb">ServiciosAgromatica.github.io</a>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
@@ -163,14 +164,6 @@ window.addEventListener('load',function(){
   var icon=L.divIcon({html:'<div style="background:#042C53;width:16px;height:16px;border-radius:50%;border:3px solid #F5C842"></div>',className:'',iconAnchor:[8,8]});
   L.marker([lat,lng],{icon:icon}).addTo(map).bindPopup('<strong>Servicios en Agromática</strong><br>Ing. Agr. Alfonso Delgado Salas<br>Florencia, San Carlos, Costa Rica').openPopup();
 });
-function enviar(e){
-  e.preventDefault();
-  if(!document.getElementById('nombre').value.trim()||!document.getElementById('correo').value.trim()||!document.getElementById('tipo').value||!document.getElementById('predio').value.trim()||!document.getElementById('area').value.trim()){
-    alert('Por favor complete todos los campos obligatorios (*).');return;
-  }
-  document.getElementById('form').style.display='none';
-  document.getElementById('ok').style.display='block';
-}
 </script>
 </body>
 </html>
