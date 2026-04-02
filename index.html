@@ -27,18 +27,8 @@ a{color:#185FA5}
 .card h3{font-size:14px;font-weight:600;color:#042C53;margin-bottom:5px}
 .card p{font-size:13px;color:#555;line-height:1.55}
 .card .price{font-size:11px;color:#185FA5;font-weight:600;margin-top:10px;border-top:1px solid #e0e0d8;padding-top:7px}
-#map{height:320px;border-radius:10px;border:1px solid #e0e0d8;overflow:hidden;position:relative}
-.crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:1000;pointer-events:none;width:36px;height:36px}
-.crosshair::before{content:'';position:absolute;top:50%;left:0;width:100%;height:2px;background:#042C53;transform:translateY(-50%)}
-.crosshair::after{content:'';position:absolute;left:50%;top:0;height:100%;width:2px;background:#042C53;transform:translateX(-50%)}
-.crosshair-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;background:#042C53;z-index:1001;pointer-events:none}
-.coord-bar{display:flex;align-items:center;gap:8px;margin-top:8px;background:#f0f4f8;border-radius:8px;padding:8px 12px;border:1px solid #dde3ea}
-.coord-label{font-size:12px;color:#555}
-.coord-val{font-size:13px;font-family:monospace;color:#042C53;flex:1;font-weight:600}
-.copy-btn{font-size:12px;padding:6px 14px;background:#042C53;color:#E6F1FB;border:none;border-radius:6px;cursor:pointer;white-space:nowrap}
-.copy-btn:hover{background:#185FA5}
-.copy-btn.copied{background:#3B6D11}
-.map-note{font-size:11px;color:#888;margin-top:6px;text-align:center}
+#map{height:260px;border-radius:10px;border:1px solid #e0e0d8;overflow:hidden}
+.map-note{font-size:12px;color:#777;margin-top:7px}
 label{display:block;font-size:13px;color:#444;margin-bottom:4px;margin-top:14px;font-weight:500}
 .field-hint{font-size:11px;color:#888;margin-top:3px}
 .area-row{display:grid;grid-template-columns:1fr 110px;gap:8px}
@@ -50,6 +40,7 @@ textarea{resize:vertical;min-height:85px}
 .aviso p{font-size:12px;color:#854F0B;line-height:1.6}
 .btn-submit{width:100%;margin-top:18px;padding:11px;background:#042C53;color:#E6F1FB;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-submit:hover{background:#185FA5}
+.success-msg{display:none;background:#EAF3DE;border:1px solid #3B6D11;color:#27500A;border-radius:8px;padding:12px;font-size:13px;margin-top:14px;text-align:center}
 .contact-bar{background:#0C447C;color:#B5D4F4;font-size:12px;text-align:center;padding:12px 1rem;margin-top:1.25rem}
 .contact-bar a{color:#85B7EB;text-decoration:none}
 .footer{text-align:center;font-size:11px;color:#aaa;padding:1rem}
@@ -107,18 +98,9 @@ textarea{resize:vertical;min-height:85px}
   </div>
 </div>
 <div class="section">
-  <h2>Ubicar mi terreno y obtener coordenadas</h2>
-  <p style="font-size:13px;color:#555;margin-bottom:10px">Mueva el mapa hasta centrar la cruz sobre su terreno. Las coordenadas del centro se actualizan automáticamente. Use el botón para copiarlas y pegarlas en el formulario.</p>
-  <div id="map">
-    <div class="crosshair"></div>
-    <div class="crosshair-dot"></div>
-  </div>
-  <div class="coord-bar">
-    <span class="coord-label">Coordenadas del centro:</span>
-    <span class="coord-val" id="coord-display">10.283300, -84.416700</span>
-    <button class="copy-btn" id="copy-btn" onclick="copiarCoords()">Copiar</button>
-  </div>
-  <p class="map-note">Arrastre el mapa · Use la rueda del mouse o los botones +/- para hacer zoom</p>
+  <h2>Ubicación</h2>
+  <div id="map"></div>
+  <p class="map-note">Florencia, Ciudad Quesada, San Carlos — Zona Huetar Norte, Costa Rica. Servicios presenciales y remotos.</p>
 </div>
 <div class="section">
   <h2>Solicitar un estudio</h2>
@@ -126,8 +108,9 @@ textarea{resize:vertical;min-height:85px}
     <div class="aviso-titulo">Aviso importante sobre la validez del reporte</div>
     <p>El reporte generado es de carácter <strong>preliminar y referencial</strong>. Los resultados se obtienen exclusivamente a partir de análisis satelital y <strong>no tienen validez técnica</strong> sin la realización posterior de una visita de campo que permita verificar, calibrar y complementar los parámetros obtenidos. El período de análisis histórico será determinado por el profesional responsable.</p>
   </div>
-  <form action="https://formspree.io/f/mwvwqdor" method="POST">
+  <form id="form" action="https://formspree.io/f/mwvwqdor" method="POST">
     <input type="hidden" name="_subject" value="Nueva solicitud de estudio — Servicios en Agromática">
+    <input type="hidden" name="_next" value="">
     <label>Nombre completo *</label>
     <input type="text" name="nombre" placeholder="Su nombre completo" required>
     <label>Correo electrónico *</label>
@@ -155,8 +138,8 @@ textarea{resize:vertical;min-height:85px}
     </div>
     <p class="field-hint">Si no conoce el área exacta, una estimación es suficiente.</p>
     <label>Coordenadas del centroide del terreno (opcional)</label>
-    <input type="text" name="coordenadas" id="campo-coords" placeholder="Use el mapa de arriba para obtenerlas">
-    <p class="field-hint">Mueva el mapa hasta centrar la cruz en su terreno, copie las coordenadas y péguelas aquí.</p>
+    <input type="text" name="coordenadas" placeholder="Ej: 10.4234, -84.5612">
+    <p class="field-hint">Latitud, longitud del punto central de su propiedad. Obténgalas desde Google Maps o su GPS.</p>
     <label>Detalles adicionales</label>
     <textarea name="detalles" placeholder="Objetivo del estudio, uso previsto del reporte, requisitos especiales…"></textarea>
     <button type="submit" class="btn-submit">Enviar solicitud</button>
@@ -174,26 +157,13 @@ textarea{resize:vertical;min-height:85px}
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-var map = L.map('map', {zoomControl:true, scrollWheelZoom:true}).setView([10.2833, -84.4167], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap', maxZoom:18}).addTo(map);
-function actualizarCoords() {
-  var c = map.getCenter();
-  var coord = c.lat.toFixed(6) + ', ' + c.lng.toFixed(6);
-  document.getElementById('coord-display').textContent = coord;
-}
-map.on('move', actualizarCoords);
-map.on('moveend', actualizarCoords);
-function copiarCoords() {
-  var txt = document.getElementById('coord-display').textContent;
-  var campo = document.getElementById('campo-coords');
-  campo.value = txt;
-  navigator.clipboard.writeText(txt).then(function() {
-    var btn = document.getElementById('copy-btn');
-    btn.textContent = '¡Copiado!';
-    btn.classList.add('copied');
-    setTimeout(function(){btn.textContent='Copiar';btn.classList.remove('copied');}, 2000);
-  });
-}
+window.addEventListener('load',function(){
+  var lat=10.2833,lng=-84.4167;
+  var map=L.map('map',{zoomControl:true,scrollWheelZoom:false}).setView([lat,lng],13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(map);
+  var icon=L.divIcon({html:'<div style="background:#042C53;width:16px;height:16px;border-radius:50%;border:3px solid #F5C842"></div>',className:'',iconAnchor:[8,8]});
+  L.marker([lat,lng],{icon:icon}).addTo(map).bindPopup('<strong>Servicios en Agromática</strong><br>Ing. Agr. Alfonso Delgado Salas<br>Florencia, San Carlos, Costa Rica').openPopup();
+});
 </script>
 </body>
 </html>
