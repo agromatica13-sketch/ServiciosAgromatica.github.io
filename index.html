@@ -106,3 +106,94 @@ textarea{resize:vertical;min-height:85px}
     </div>
   </div>
 </div>
+<div class="section">
+  <h2>Ubicar mi terreno y obtener coordenadas</h2>
+  <p style="font-size:13px;color:#555;margin-bottom:10px">Mueva el mapa hasta centrar la cruz sobre su terreno. Las coordenadas del centro se actualizan automáticamente. Use el botón para copiarlas y pegarlas en el formulario.</p>
+  <div id="map">
+    <div class="crosshair"></div>
+    <div class="crosshair-dot"></div>
+  </div>
+  <div class="coord-bar">
+    <span class="coord-label">Coordenadas del centro:</span>
+    <span class="coord-val" id="coord-display">10.283300, -84.416700</span>
+    <button class="copy-btn" id="copy-btn" onclick="copiarCoords()">Copiar</button>
+  </div>
+  <p class="map-note">Arrastre el mapa · Use la rueda del mouse o los botones +/- para hacer zoom</p>
+</div>
+<div class="section">
+  <h2>Solicitar un estudio</h2>
+  <div class="aviso">
+    <div class="aviso-titulo">Aviso importante sobre la validez del reporte</div>
+    <p>El reporte generado es de carácter <strong>preliminar y referencial</strong>. Los resultados se obtienen exclusivamente a partir de análisis satelital y <strong>no tienen validez técnica</strong> sin la realización posterior de una visita de campo que permita verificar, calibrar y complementar los parámetros obtenidos. El período de análisis histórico será determinado por el profesional responsable.</p>
+  </div>
+  <form action="https://formspree.io/f/mwvwqdor" method="POST">
+    <input type="hidden" name="_subject" value="Nueva solicitud de estudio — Servicios en Agromática">
+    <label>Nombre completo *</label>
+    <input type="text" name="nombre" placeholder="Su nombre completo" required>
+    <label>Correo electrónico *</label>
+    <input type="email" name="email" placeholder="correo@ejemplo.com" required>
+    <label>Teléfono / WhatsApp</label>
+    <input type="tel" name="telefono" placeholder="+506 8xxx-xxxx">
+    <label>Tipo de estudio *</label>
+    <select name="tipo_estudio" required>
+      <option value="">— Seleccione el tipo de análisis —</option>
+      <option>Análisis NDVI / teledetección</option>
+      <option>Estudio de uso del suelo</option>
+      <option>Estimación de carbono y CO₂</option>
+      <option>Combinado (varios análisis)</option>
+    </select>
+    <label>Nombre o descripción del predio *</label>
+    <input type="text" name="predio" placeholder="Ej: Finca Las Palmas, Pocosol, San Carlos" required>
+    <label>Área aproximada del terreno *</label>
+    <div class="area-row">
+      <input type="number" name="area" placeholder="Ej: 14.5" min="0.1" step="0.1" required>
+      <select name="unidad_area">
+        <option value="ha">Hectáreas</option>
+        <option value="m2">m²</option>
+        <option value="mz">Manzanas</option>
+      </select>
+    </div>
+    <p class="field-hint">Si no conoce el área exacta, una estimación es suficiente.</p>
+    <label>Coordenadas del centroide del terreno (opcional)</label>
+    <input type="text" name="coordenadas" id="campo-coords" placeholder="Use el mapa de arriba para obtenerlas">
+    <p class="field-hint">Mueva el mapa hasta centrar la cruz en su terreno, copie las coordenadas y péguelas aquí.</p>
+    <label>Detalles adicionales</label>
+    <textarea name="detalles" placeholder="Objetivo del estudio, uso previsto del reporte, requisitos especiales…"></textarea>
+    <button type="submit" class="btn-submit">Enviar solicitud</button>
+  </form>
+</div>
+<div class="contact-bar">
+  <strong style="color:#E6F1FB">Servicios en Agromática</strong>
+  &nbsp;|&nbsp; <a href="tel:+50683331313">+506 8333-1313</a>
+  &nbsp;|&nbsp; Florencia, San Carlos, Costa Rica
+  &nbsp;|&nbsp; <a href="https://www.facebook.com/agromaticaCR" target="_blank">Facebook</a>
+</div>
+<div class="footer">
+  Servicios en Agromática · Profesional responsable: Ing. Agr. Alfonso Delgado Salas, CIAGR No. 2677<br>
+  <a href="https://agromatica13-sketch.github.io/ServiciosAgromatica.github.io/" style="color:#bbb">ServiciosAgromatica.github.io</a>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+var map = L.map('map', {zoomControl:true, scrollWheelZoom:true}).setView([10.2833, -84.4167], 13);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OpenStreetMap', maxZoom:18}).addTo(map);
+function actualizarCoords() {
+  var c = map.getCenter();
+  var coord = c.lat.toFixed(6) + ', ' + c.lng.toFixed(6);
+  document.getElementById('coord-display').textContent = coord;
+}
+map.on('move', actualizarCoords);
+map.on('moveend', actualizarCoords);
+function copiarCoords() {
+  var txt = document.getElementById('coord-display').textContent;
+  var campo = document.getElementById('campo-coords');
+  campo.value = txt;
+  navigator.clipboard.writeText(txt).then(function() {
+    var btn = document.getElementById('copy-btn');
+    btn.textContent = '¡Copiado!';
+    btn.classList.add('copied');
+    setTimeout(function(){btn.textContent='Copiar';btn.classList.remove('copied');}, 2000);
+  });
+}
+</script>
+</body>
+</html>
